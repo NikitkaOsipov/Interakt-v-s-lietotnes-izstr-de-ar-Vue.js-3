@@ -6,10 +6,30 @@ const name = ref('')
 
 const input_content = ref('')
 const input_category = ref(null)
+const filter_status = ref('')
+const filter_category = ref('')
+const filter_name = ref('')
+
 
 const todos_asc = computed(() => todos.value.sort((a,b) =>{
-	return a.createdAt - b.createdAt // sort by date created
+	return  b.createdAt - a.createdAt // sort by date created
 }))
+
+const filteredTodos = computed(() => {
+	return todos_asc.value.filter(todo => {
+        return (
+			(filter_status.value ? todo.done === (filter_status.value === 'true') : true) &&
+          (filter_category.value ? todo.category === filter_category.value : true) &&
+          (filter_name.value ? todo.content.includes(filter_name.value) : true)
+        );
+	})
+})
+
+const clearFilters = () => {
+  filter_status.value = ''
+  filter_category.value = ''
+  filter_name.value = ''
+}
 
 watch(name, (newVal) => {
 	localStorage.setItem('name', newVal) // when name changes, save to local storage
@@ -100,8 +120,26 @@ onMounted(() => {
 		<section class="todo-list">
 			<h3>TODO LIST</h3>
 			<div class="list" id="todo-list">
-
-				<div v-for="todo in todos_asc" :class="`todo-item ${todo.done && 'done'}`">
+				<div>
+					<h4>Filter Todos</h4>
+					<input 
+						type="text" 
+						placeholder="Filter by name" 
+						v-model="filter_name" />
+					<select v-model="filter_status">
+						<option value="">All</option>
+						<option value="true">Completed</option>
+						<option value="false">Pending</option>
+					</select>
+					<select v-model="filter_category">
+						<option value="">All</option>
+						<option value="business">Business</option>
+						<option value="personal">Personal</option>
+					</select>
+					<button @click="clearFilters">Clear Filters</button>
+				</div>
+				
+				<div v-for="todo in filteredTodos" :class="`todo-item ${todo.done && 'done'}`">
 					<label>
 						<input type="checkbox" v-model="todo.done" />
 						<span :class="`bubble ${

@@ -83,7 +83,7 @@ onMounted(() => {
 					type="text" 
 					name="content" 
 					id="content" 
-					placeholder="e.g. make a video"
+					placeholder="e.g. do homework"
 					v-model="input_content" />
 				
 				<h4>Pick a category</h4>
@@ -111,6 +111,16 @@ onMounted(() => {
 						<div>Personal</div>
 					</label>
 
+					<label>
+						<input 
+							type="radio" 
+							name="category" 
+							id="category3" 
+							value="study"
+							v-model="input_category" />
+						<span class="bubble study"></span>
+						<div>Study</div>
+					</label>
 				</div>
 
 				<input type="submit" value="Add todo" />
@@ -120,8 +130,8 @@ onMounted(() => {
 		<section class="todo-list">
 			<h3>TODO LIST</h3>
 			<div class="list" id="todo-list">
-				<div>
-					<h4>Filter Todos</h4>
+				<h3>Filter Todos</h3>
+				<div class="filters">
 					<input 
 						type="text" 
 						placeholder="Filter by name" 
@@ -135,18 +145,15 @@ onMounted(() => {
 						<option value="">All</option>
 						<option value="business">Business</option>
 						<option value="personal">Personal</option>
+						<option value="study">Study</option>
 					</select>
 					<button @click="clearFilters">Clear Filters</button>
-				</div>
+				</div>                                                                   
 				
 				<div v-for="todo in filteredTodos" :class="`todo-item ${todo.done && 'done'}`">
 					<label>
 						<input type="checkbox" v-model="todo.done" />
-						<span :class="`bubble ${
-							todo.category == 'business' 
-								? 'business' 
-								: 'personal'
-						}`"></span>
+						<span :class="`bubble ${todo.category}`">	</span>
 					</label>
 
 					<div class="todo-content">
